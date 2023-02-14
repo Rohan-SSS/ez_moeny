@@ -1,0 +1,14 @@
+DA:
+https://medium.com/geekculture/creating-the-stochastic-rsi-indicator-and-back-testing-it-in-python-386459510ef9
+https://tcoil.info/get-stochastic-rsi-for-stocks-with-python/
+
+
+MI:
+https://www.geeksforgeeks.org/long-short-term-memory-networks-explanation/
+https://towardsdatascience.com/how-to-choose-the-right-activation-function-for-neural-networks-3941ff0e6f9c#:~:text=In%20a%20binary%20classifier%2C%20we,with%20one%20node%20per%20class.
+
+
+
+RP:
+https://ijcseonline.org/pub_paper/13-IJCSE-08333.pdf
+
