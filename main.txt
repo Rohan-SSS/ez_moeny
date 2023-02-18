@@ -1,0 +1,26 @@
+Feature Extension: 
+    min-max scaling
+    polarizing
+    calculating fluctuatuation percentage
+
+Features:
+    Price
+    Price Change
+    Price Change percentage
+    Volume
+    MACD
+    RSI
+    Stochastic RSI
+    200EMA and Price Crossover
+    50, 100 EMA 
+    VWAP
+
+RFE:
+    Coefficent
+    Feature Importance
+
+PCA:
+    Feature Pre-processing
+    Output RFE  
+    PCA Algorithm
+    
