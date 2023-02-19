@@ -16,7 +16,7 @@ def ema_n(raw_df, n):
     return raw_df
 
 def vwap(raw_df, label='VWAP', window=3, fillna=True):
-        vwap_hcl3 = VolumeWeightedAveragePrice(high=raw_df['High'], low=raw_df['Low'], close=raw_df["Close"], volume=raw_df['Volume'], window=window, fillna=fillna).volume_weighted_average_price()
-        vwap_hcl3 = vwap_hcl3.round(3)
-        raw_df[label] = vwap_hcl3
-        return raw_df
+    vwap_hcl3 = VolumeWeightedAveragePrice(high=raw_df['High'], low=raw_df['Low'], close=raw_df["Close"], volume=raw_df['Volume'], window=window, fillna=fillna).volume_weighted_average_price()
+    vwap_hcl3 = vwap_hcl3.round(3)
+    raw_df[label] = vwap_hcl3
+    return raw_df
