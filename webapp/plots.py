@@ -1,4 +1,12 @@
 import matplotlib.pyplot as plt
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
+
+import pandas as pd
+import numpy as np
+
+import streamlit as st
+
 plt.style.use("dark_background")
 
 def plot_chart(df):
@@ -41,3 +49,45 @@ def plot_res(predictions, y):
     plt.plot((y[:100]),  'r')
     plt.axhline(y=0, color='black', linestyle='--')
     plt.show
+
+def interactive_chart(df):
+    df.columns = [x.lower() for x in df.columns]
+
+    # Create our primary chart
+    # the rows/cols arguments tell plotly we want two figures
+    fig = make_subplots(rows=1, cols=1)  
+
+    # Create our Candlestick chart with an overlaid price line
+    fig.append_trace(
+        go.Candlestick(
+            x=df.index,
+            open=df['open'],
+            high=df['high'],
+            low=df['low'],
+            close=df['close'],
+            increasing_line_color='#ff9900',
+            decreasing_line_color='black',
+            showlegend=False
+           
+
+        ), row=1, col=1  # <------------ upper chart
+    )
+
+    # Make it pretty
+    layout = go.Layout(
+        plot_bgcolor='#efefef',
+        # Font Families
+        font_family='Monospace',
+        font_color='#000000',
+        font_size=20,
+        xaxis=dict(
+            rangeslider=dict(
+                visible=False
+            )
+        )
+    )
+    fig.update_layout(layout)
+
+    # View our chart in the Streamlit app
+    st.plotly_chart(fig)
+

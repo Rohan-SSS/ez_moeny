@@ -18,7 +18,6 @@ st.title("EZ_money @ Maze Bank")
 
 ticker = st.text_input('Enter Stock Ticker ', 'AAPL')
 
-
 # using get_temp_csv tgo make a temp csv to get data and etc
 # get_temp_csv(ticker)
 df = pd.read_csv(get_temp_csv(ticker))
@@ -28,7 +27,8 @@ df = vwap(df)
 df = get_trend(df)
 
 st.subheader('check')
-st.pyplot(plot_chart(df[:100]))
+interactive_chart(df[:100])
+
 
 st.subheader('check')
 st.write(df.head())
@@ -59,7 +59,7 @@ x3 = scaler.fit_transform(x3)
 
 X = np.stack([x0, x1, x2, x3], axis=2)
 
-model = load_model('..\\models\\bot\\bot-multi-1.hdf5')
+model = load_model('..\\models\\bot\\bot-lstm-multi.hdf5')
 
 predictions = model.predict(X)
 
