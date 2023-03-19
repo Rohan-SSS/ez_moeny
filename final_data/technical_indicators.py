@@ -149,7 +149,7 @@ def _macd(df):
     df['MACDs_12_26_9'] = macd['MACDs_12_26_9']
     df['MACDh_12_26_9'] = macd['MACDh_12_26_9']
     # Create a signal column based on buy and sell signals
-    signal = 0
+    signal = np.zeros(len(df))
     signal[macd['MACD_12_26_9'] > macd['MACDs_12_26_9']] = 1
     signal[macd['MACD_12_26_9'] < macd['MACDs_12_26_9']] = -1
 
