@@ -12,6 +12,13 @@ from technical_indicators import *
 
 import pandas_ta as ta
 from ta.volume import VolumeWeightedAveragePrice
+# -----------------------------------------------------------
+
+try:
+    st.set_page_config(layout="wide")
+except:
+    st.beta_set_page_config(layout="wide")
+
 
 # -----------------------------------------------------------
 
@@ -84,7 +91,7 @@ df = df.reindex(columns=[ 'open', 'open_change', 'open_pct_change', 'high', 'hig
     ])
 
 st.subheader('check')
-st.write(df.head())
+st.write(df.describe())
 
 # --------------------------------------------------------------
 # making np array stacks to fit data into lstm dim
@@ -161,7 +168,7 @@ X = np.stack([o0, o1, o2, h0, h1, h2, l0, l1, l2, c0, c1, c2, v0, v1, v2, em1, e
 model = load_model('..\\dmn\\main-tanh-(128, 128, 128)-sgd.hdf5')
 
 predictions = model.predict(X)
-cmp = predictions #[1 if x > 0.35 else -1 if x < -0.35 else 0 for x in predictions]
+cmp =[1 if x > 0.25 else -1 if x < -0.25 else 0 for x in predictions]
 
 st.subheader('check')
 st.pyplot(xyz(cmp, y))
