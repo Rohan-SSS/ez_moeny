@@ -32,3 +32,9 @@ def get_temp_csv(ticker):
         temp_csv = temp_file.name
 
     return temp_csv
+
+def get_overview(ticker):
+    url = f'https://www.alphavantage.co/query?function=OVERVIEW&symbol={ticker}&apikey=3ZEI0A09ZSJT873H'
+    r = requests.get(url)
+    data = r.json()
+    return data

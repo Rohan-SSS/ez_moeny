@@ -1,14 +1,18 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+import plotly.graph_objs as go
+import json
 
 from keras.models import load_model
 from tensorflow import keras
+from datetime import datetime
 
 import streamlit as st
 
-from get_temp_csv import get_temp_csv
+from get_temp_csv import *
 from technical_indicators import *  
+from get_chart import *
 
 import pandas_ta as ta
 from ta.volume import VolumeWeightedAveragePrice
@@ -24,17 +28,29 @@ except:
 
 st.set_option('deprecation.showPyplotGlobalUse', False)
 
-
-st.title("EZ_money")
+st.title("Stock Trend Prediction")
 
 ticker = st.text_input('Enter Stock Ticker ', 'AAPL')
+
+
+overview_data = get_overview(ticker)
+
+st.write(overview_data["Name"])
+st.write(overview_data["Description"])
 
 # using get_temp_csv tgo make a temp csv to get data and etc
 # get_temp_csv(ticker)
 df = pd.read_csv(get_temp_csv(ticker))
 
 # -----------------------------------------------------------
+# chart
 
+col1, col2 = st.columns([2, 1])
+
+with col1:
+    st.plotly_chart(get_candlestick_chart(ticker, df))
+
+# -------------------------------------------------------
 # Getting EMA and EMA Signal
 wb_ema_n(df, 100)
 wb_ema_n(df, 200)
@@ -64,8 +80,6 @@ df = df.drop('index',axis=1)
 
 
 df.to_csv('test.csv')
-st.subheader('check')
-st.write(df.head())
 
 # ----------------------------------------------------------
 # scaling and reindexing data
@@ -90,8 +104,9 @@ df = df.reindex(columns=[ 'open', 'open_change', 'open_pct_change', 'high', 'hig
                         'ema_signal', 'vwap_signal', 'stochrsi_signal', 'macd_signal', 'trend'
     ])
 
-st.subheader('check')
-st.write(df.describe())
+# st.subheader('Preprocessing the dataframe')
+# st.write('Below is the normalized dataframe which is fed to to the model to give out predictions ')
+# st.write(df.describe())
 
 # --------------------------------------------------------------
 # making np array stacks to fit data into lstm dim
@@ -168,7 +183,26 @@ X = np.stack([o0, o1, o2, h0, h1, h2, l0, l1, l2, c0, c1, c2, v0, v1, v2, em1, e
 model = load_model('..\\dmn\\main-tanh-(128, 128, 128)-sgd.hdf5')
 
 predictions = model.predict(X)
-cmp =[1 if x > 0.25 else -1 if x < -0.25 else 0 for x in predictions]
 
-st.subheader('check')
-st.pyplot(xyz(cmp, y))
+cmp =[1 if x > 0.25 else -1 if x < -0.25 else 0 for x in predictions]
+real = [item for sublist in y for item in sublist]
+
+curr_pred = predictions[-1]
+
+with col2:
+    st.subheader("Current Prediction")
+    if curr_pred > 0.25:
+        pct = (curr_pred * 100)
+        pctc = 100 if pct > 100.00 else pct
+        st.write(f"Buy with confidence % {pctc}")
+
+    elif curr_pred < -0.25:
+        pct = (-(curr_pred * 100))
+        pctc =  100 if pct > 100.00 else pct
+        st.write(f"Sell with confidence % {pctc}")
+
+    st.write("")
+    st.write("")
+
+st.subheader("Real vs Predicted graph ")
+st.plotly_chart(get_pred_chart(real, cmp))
