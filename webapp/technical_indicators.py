@@ -191,9 +191,3 @@ def get_abs_pct(df):
 
     df['volume_change'] = df['volume'] - df['volume'].shift(1)
     df['volume_pct_change'] = df['volume_change'] / df['volume'].shift(1) * 100
-
-def xyz(cmp, y_test):
-    plt.figure(figsize=(24,12))
-    plt.plot(cmp[-200:-100])
-    plt.plot(y_test[-200:-100],'r', linestyle='--' )
-    plt.show
