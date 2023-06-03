@@ -180,7 +180,7 @@ y=np.reshape(y, (len(y), 1))
 
 X = np.stack([o0, o1, o2, h0, h1, h2, l0, l1, l2, c0, c1, c2, v0, v1, v2, em1, em2, vw, stk, std, ma ,ms, mh, em_s, vw_s, st_s, ma_s], axis=2)
 
-model = load_model('..\\dmn\\main-tanh-(128, 128, 128)-sgd.hdf5')
+model = load_model('..\\dmn\\main-relu-(128, 128, 128)-sgd-period7.hdf5')
 
 predictions = model.predict(X)
 
@@ -190,16 +190,16 @@ real = [item for sublist in y for item in sublist]
 curr_pred = predictions[-1]
 
 with col2:
-    st.subheader("Current Prediction")
+    st.subheader("\tCurrent Prediction")
     if curr_pred > 0.25:
         pct = (curr_pred * 100)
         pctc = 100 if pct > 100.00 else pct
-        st.write(f"Buy with confidence % {pctc}")
+        st.write(f"\tBuy with confidence % {pctc}")
 
     elif curr_pred < -0.25:
         pct = (-(curr_pred * 100))
         pctc =  100 if pct > 100.00 else pct
-        st.write(f"Sell with confidence % {pctc}")
+        st.write(f"\tSell with confidence % {pctc}")
 
     st.write("")
     st.write("")

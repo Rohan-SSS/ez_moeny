@@ -165,7 +165,7 @@ def wb_macd(df):
 # Define the function to calculate the trend
 def get_trend(df):
     # Calculate the percentage change in price for the current candlestick and the next 14 candlesticks
-    pct_change = df['close'].pct_change(periods=15)
+    pct_change = df['close'].pct_change(periods=6)
     
     # Initialize the trend column with 0 (neutral)
     df['trend'] = 0
