@@ -1,0 +1,11 @@
+numpy
+pandas
+matplotlib
+tensorflow
+scikit-learn
+sklearn
+streamlit
+datetime
+pandas_ta
+plotly
+ta

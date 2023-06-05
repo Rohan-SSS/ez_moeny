@@ -1,2 +1,4 @@
-/final_df/__pycache__
-/webapp/__pycache__
+final_df/__pycache__
+webapp/__pycache__
+dmn/.ipynb_checkpoints
+venv/
