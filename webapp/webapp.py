@@ -10,7 +10,7 @@ from datetime import datetime
 
 import streamlit as st
 
-from get_temp_csv import *
+from get_ticker_data import *
 from technical_indicators import *  
 from get_chart import *
 
@@ -30,17 +30,11 @@ st.set_option('deprecation.showPyplotGlobalUse', False)
 
 st.title("Stock Trend Prediction")
 
-ticker = st.text_input('Enter Stock Ticker ', 'AAPL')
-
-
-overview_data = get_overview(ticker)
-
-st.write(overview_data["Name"])
-st.write(overview_data["Description"])
+ticker = st.text_input('Enter Stock Ticker ', 'XAUUSD')
 
 # using get_temp_csv tgo make a temp csv to get data and etc
 # get_temp_csv(ticker)
-df = pd.read_csv(get_temp_csv(ticker))
+df = get_ticker_data(ticker)
 
 # -----------------------------------------------------------
 # chart
@@ -180,7 +174,7 @@ y=np.reshape(y, (len(y), 1))
 
 X = np.stack([o0, o1, o2, h0, h1, h2, l0, l1, l2, c0, c1, c2, v0, v1, v2, em1, em2, vw, stk, std, ma ,ms, mh, em_s, vw_s, st_s, ma_s], axis=2)
 
-model = load_model('../dmn/main-tanh-(128, 128, 128)-sgd-period7_(1kk).hdf5')
+model = load_model('../dmn/main-tanh-(128, 128, 128)-sgd-period7_(1kk).hdf5') # main-tanh-(128, 128, 128)-sgd-period7_(1kk).hdf5
 predictions = model.predict(X)
 
 cmp =[1 if x > 0.25 else -1 if x < -0.25 else 0 for x in predictions]
