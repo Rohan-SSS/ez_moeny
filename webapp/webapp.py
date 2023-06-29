@@ -11,6 +11,7 @@ from datetime import datetime
 import streamlit as st
 
 from get_ticker_data import *
+from get_ticker_data_api import *
 from technical_indicators import *  
 from get_chart import *
 
@@ -32,8 +33,14 @@ st.title("Stock Trend Prediction")
 
 ticker = st.text_input('Enter Stock Ticker ', 'XAUUSD')
 
-# using get_temp_csv tgo make a temp csv to get data and etc
-# get_temp_csv(ticker)
+# using get_temp_csv to make a temp csv to get data
+# uncomment if you want to use alphavantage api to fetch data
+
+# api_key = "Your alphavantage api key"
+# df = pd.read_csv(get_temp_csv(ticker, api_key)) 
+
+
+# uses MT5 application to fetch data
 df = get_ticker_data(ticker)
 
 # -----------------------------------------------------------

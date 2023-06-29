@@ -3,6 +3,9 @@ import pandas as pd
 from datetime import datetime
 
 def get_ticker_data(ticker):
+    """
+    This fucntion uses Meta Trader 5 application to fetch the real time data needed to make predictions
+    """
     mt5.initialize()
     # Compute now date
     from_date = datetime.now()
@@ -18,3 +21,4 @@ def get_ticker_data(ticker):
     df_rates = df_rates.drop(['spread', 'real_volume'], axis=1)
     df_rates.rename(columns={"tick_volume":"volume"}, inplace=True)
     return df_rates
+
