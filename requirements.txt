@@ -8,4 +8,4 @@ plotly
 ta
 pandas
 numpy
-MetaTrader5
+# MetaTrader5

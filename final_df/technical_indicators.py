@@ -1,16 +1,31 @@
-# CCI
-# 
-
+# Imports
 import numpy as np
 import pandas as pd
 import pandas_ta as ta
 from ta.volume import VolumeWeightedAveragePrice
 
 # Price change with %-------------------------------
-def _price_change(df):
+def price_change(df):
     df['price_change'] = df['close'] - df['close'].shift(1)
     df['price_pct_change'] = df['price_change'] / df['close'].shift(1) * 100
+
+    df['open_change'] = df['open'] - df['open'].shift(1)
+    df['open_pct_change'] = df['open_change'] / df['open'].shift(1) * 100
+
+    df['high_change'] = df['high'] - df['high'].shift(1)
+    df['high_pct_change'] = df['high_change'] / df['high'].shift(1) * 100
+
+    df['low_change'] = df['low'] - df['low'].shift(1)
+    df['low_pct_change'] = df['low_change'] / df['low'].shift(1) * 100
+
+    df['close_change'] = df['close'] - df['close'].shift(1)
+    df['close_pct_change'] = df['close_change'] / df['close'].shift(1) * 100
+
+    df['volume_change'] = df['volume'] - df['volume'].shift(1)
+    df['volume_pct_change'] = df['volume_change'] / df['volume'].shift(1) * 100
+
     return df
+
 
 
 # EMA--------------------------------------------
@@ -19,14 +34,14 @@ def calculate_ema(data, n):
     ema = data.close.ewm(span=n, adjust=False).mean()
     return ema
 
-def _ema_n(df, n):
+def ema_n(df, n):
     close_price = df['close']
     ema_n = calculate_ema(df, n)
     ema_n = ema_n.round(6)
     df['ema_{}'.format(n)] = ema_n
     return df
 
-def _ema_signal(df):
+def ema_signal(df):
     diff100 = (df['close'] - df['ema_100'])/df['ema_100']
     diff200 = (df['close'] - df['ema_200'])/df['ema_200']
     # Create the signal column
@@ -41,70 +56,23 @@ def _ema_signal(df):
 
 # VWAP-----------------------------------------------
 
-# def generate_signals_vwap(df):
-#     sell_signal = df['close'] < (df['vwap'] + (0.001 * df['close']))
-#     buy_signal = df['close'] > (df['vwap'] + (0.001 * df['close']))
-#     return buy_signal, sell_signal
-
-# def _vwap(df, label='vwap', window=3, fillna=True):
-#         vwap_hcl3 = VolumeWeightedAveragePrice(high=df['high'], low=df['low'], close=df["close"], volume=df['volume'], window=window, fillna=fillna).volume_weighted_average_price()
-#         df[label] = vwap_hcl3
-#         buy_signal, sell_signal = generate_signals_vwap(df)
-
-#         # Add signals to the DataFrame
-#         df['vwap_buy_signal'] = buy_signal.astype(int)
-#         df['vwap_sell_signal'] = sell_signal.astype(int)
-
-#         return df
-
 def generate_signal_vwap(df):
     signal = pd.Series(data=np.zeros(len(df)), index=df.index)
-    signal[df['close'] > (df['vwap'] + (0.001 * df['close']))] = 1
-    signal[df['close'] < (df['vwap'] + (0.001 * df['close']))] = -1
+    signal[df['close'] > (df['vwap'] + (0.0005 * df['close']))] = 1
+    signal[df['close'] < (df['vwap'] - (0.0005 * df['close']))] = -1
     return signal.astype(int)
 
-def _vwap(df, label='vwap', window=3, fillna=True):
+def vwap(df, label='vwap', window=3, fillna=True):
     vwap_hcl3 = VolumeWeightedAveragePrice(high=df['high'], low=df['low'], close=df['close'], volume=df['volume'], window=window, fillna=fillna).volume_weighted_average_price()
     df[label] = vwap_hcl3
     signal = generate_signal_vwap(df)
     df['vwap_signal'] = signal
     return df
 
-# RSI-------------------------------------------
 
-# def generate_signals_rsi(df):
-#     buy_signal = (df['rsi'] < 30) & (df['rsi'].shift(1) >= 30)
-#     sell_signal = (df['rsi'] > 70) & (df['rsi'].shift(1) <= 70)
-#     return buy_signal, sell_signal
+# Stochastic RSI--------------------------------------
 
-# def _rsi(df):
-#     rsi = ta.momentum.rsi(df['close'], window=14) # to add length add , length=6 default 14
-#     df['rsi'] = rsi
-#     buy_signal, sell_signal = generate_signals_rsi(df)
-
-#     # Add signals to the DataFrame
-#     df['rsi_buy_signal'] = buy_signal.astype(int)
-#     df['rsi_sell_signal'] = sell_signal.astype(int)
-#     return df
-
-
-# stochastic RSI--------------------------------------
-
-# def _stochrsi(df, overbought=80, oversold=20):
-#     # Calculate Stochastic RSI
-#     stochrsi = df.ta.stoch(high='high', low='low', close='close', k=14, d=3, append=True)
-
-#     # Create boolean masks for overbought and oversold levels
-#     is_overbought = (stochrsi['STOCHk_14_3_3'] > overbought) & (stochrsi['STOCHd_14_3_3'] > overbought) & (stochrsi['STOCHk_14_3_3'] < stochrsi['STOCHd_14_3_3'])
-#     is_oversold = (stochrsi['STOCHk_14_3_3'] < oversold) & (stochrsi['STOCHd_14_3_3'] < oversold) & (stochrsi['STOCHk_14_3_3'] > stochrsi['STOCHd_14_3_3'])
-
-#     # Add signals to the DataFrame
-#     df['stochrsi_sell_signal'] = is_overbought.astype(int)
-#     df['stochrsi_buy_signal'] = is_oversold.astype(int)
-
-#     return df
-
-def _stochrsi(df, overbought=80, oversold=20):
+def stochrsi(df, overbought=80, oversold=20):
     # Calculate Stochastic RSI
     stochrsi = df.ta.stoch(high='high', low='low', close='close', k=14, d=3, append=True)
 
@@ -127,23 +95,7 @@ def _stochrsi(df, overbought=80, oversold=20):
 
 # MACD -------------------------------------------------
 
-# def _macd(df):
-#     macd = ta.macd(df['close'])
-#     df['MACD_12_26_9'] = macd['MACD_12_26_9']
-#     # Create a column for MACD histogram
-#     macd_histogram = macd['MACDh_12_26_9']
-
-#     # Identify buy and sell signals
-#     buy_signal = macd['MACD_12_26_9'] > macd['MACDs_12_26_9']
-#     sell_signal = macd['MACD_12_26_9'] < macd['MACDs_12_26_9']
-
-#     # Add buy and sell signals to the DataFrame
-#     df['macd_buy_signal'] = buy_signal.astype(int)
-#     df['macd_sell_signal'] = sell_signal.astype(int)
-
-#     return df
-
-def _macd(df):
+def macd(df):
     macd = ta.macd(df['close'])
     df['MACD_12_26_9'] = macd['MACD_12_26_9']
     df['MACDs_12_26_9'] = macd['MACDs_12_26_9']
@@ -155,5 +107,21 @@ def _macd(df):
 
     # Add signal column to the DataFrame
     df['macd_signal'] = signal
+    df['macd_signal'] = df['macd_signal'].astype(int)
+    return df
 
+# Trend -------------------------------------------------
+def get_trend(df):
+    # Calculate the percentage change in price for the current candlestick and the next 7 candlesticks
+    pct_change = df['close'].pct_change(periods=7)
+    
+    # Initialize the trend column with 0 (neutral)
+    df['trend'] = 0
+    
+    # Set the trend to 1 (up) if the price is up by 0.2% or more in any of the next 7 candlesticks
+    df.loc[pct_change >= 0.002, 'trend'] = 1
+    
+    # Set the trend to -1 (down) if the price is down by 0.2% or more in any of the next 7 candlesticks
+    df.loc[pct_change <= -0.002, 'trend'] = -1
+    
     return df
